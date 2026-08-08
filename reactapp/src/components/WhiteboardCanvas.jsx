@@ -9,18 +9,6 @@ import "./../styles/whiteboard.css";
 const WhiteboardCanvas = ({ whiteboardId, role = "Editor" }) => {
 	const [liveAlerts, setLiveAlerts] = useState([]);
 
-	// Simulated alerts loop
-	useEffect(() => {
-		const timeouts = [
-			setTimeout(() => triggerAlert("Alice Jenkins joined the board"), 3000),
-			setTimeout(() => triggerAlert("Bob Miller started drawing"), 7000),
-			setTimeout(() => triggerAlert("Dave Wilson joined"), 12000),
-			setTimeout(() => triggerAlert("Charlie Davis commented: 'This looks fantastic!'"), 18000),
-			setTimeout(() => triggerAlert("Bob Miller left"), 24000)
-		];
-		return () => timeouts.forEach(clearTimeout);
-	}, []);
-
 	const triggerAlert = (msg) => {
 		const id = Date.now();
 		setLiveAlerts((prev) => [...prev, { id, msg }]);

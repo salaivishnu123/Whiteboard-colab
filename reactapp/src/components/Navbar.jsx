@@ -32,7 +32,6 @@ export default function Navbar({ user }) {
         <div className="navbar-logo">WB</div>
         <div>
           <h1 className="logo-text">Whiteboard Collab</h1>
-          <span className="navbar-tagline">Design. Ideate. Collaborate without friction.</span>
         </div>
       </div>
 

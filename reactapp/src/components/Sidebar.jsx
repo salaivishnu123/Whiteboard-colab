@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "../styles/common.css";
 
 const NavItem = ({ to, icon, label, end }) => (
@@ -14,6 +14,7 @@ const NavItem = ({ to, icon, label, end }) => (
 );
 
 export default function Sidebar({ user }) {
+  const navigate = useNavigate();
   const isAdmin = user?.role === "Administrator";
 
   return (
@@ -48,7 +49,7 @@ export default function Sidebar({ user }) {
       {!isAdmin && (
         <div className="sidebar-footer">
           <p>Need inspiration?</p>
-          <button className="sidebar-footer-btn">Browse templates</button>
+          <button className="sidebar-footer-btn" onClick={() => navigate("/workspace/templates")}>Browse templates</button>
         </div>
       )}
     </aside>
