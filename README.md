@@ -1,29 +1,144 @@
-# Online Whiteboard Collaboration (REST-only)
+# 🎨 Real-Time Whiteboard Collaboration Tool
 
-This project contains a React frontend (`reactapp`, port 8081) and a Spring Boot backend (`springapp`, port 8080) using MySQL.
+A powerful, interactive full-stack real-time whiteboard collaboration platform designed for teams, educators, and creators. Build, sketch, brainstorm, and manage shared workspaces effortlessly.
 
-Run order:
-- Start MySQL locally (user: root, password: examly) and ensure `appDB` is accessible.
-- In `springapp`, run the Spring Boot app.
-- In `reactapp`, run the React dev server.
+---
 
-Environment:
-- React dev server listens on http://localhost:8081
-- Backend API at http://localhost:8080
+## 🚀 Key Features
 
-Notes:
-- WebSocket features from the SRS are deferred. Presence and collaboration are via REST placeholders for now.
-- Templates, workspaces, and whiteboards endpoints are implemented per SRS.# afe495df-4963-4c72-875c-2d930b7c3c69-b089b7fb-c144-4dd5-be7e-9ba4b3eab3c6
-https://sonar.server.examly.io/dashboard?id=iamneo-production_afe495df-4963-4c72-875c-2d930b7c3c69-b089b7fb-c144-4dd5-be7e-9ba4b3eab3c6&amp;codeScope=overall
-<img width="1898" height="891" alt="Screenshot 2025-10-08 142636" src="https://github.com/user-attachments/assets/00eef20e-0046-4848-bbb3-6eb85638285f" />
+* **Interactive Canvas & Drawing Tools:**
+  * Freehand drawing, straight lines, rectangles, circles, and custom text.
+  * Stroke color picker, brush thickness adjustments, eraser mode, and undo/redo operations.
+  * Infinite panning, zoom in/out, and grid snap toggle.
+  * Export boards as high-resolution images (PNG/JPEG) or JSON data.
 
-<img width="947" height="608" alt="Screenshot 2025-10-11 134026" src="https://github.com/user-attachments/assets/bdcf2acb-3e0b-488e-9ebe-e70b449d3221" />
-<img width="1869" height="863" alt="Screenshot 2025-10-08 142611" src="https://github.com/user-attachments/assets/28285c6f-0fe7-4419-9f48-19679656d095" />
+* **Workspaces & Organization:**
+  * Organize whiteboards into dedicated workspaces (Personal, Team, Public).
+  * Role-based access control (Admin, Editor, Viewer).
+  * Pre-built customizable templates (Kanban, Flowcharts, Mindmaps, Brainstorming).
 
-<img width="1919" height="903" alt="Screenshot 2025-10-10 150422" src="https://github.com/user-attachments/assets/724e06f4-be26-41b2-8938-f84678d14eb8" />
+* **Collaboration & Sharing:**
+  * Real-time participant tracking and live collaborator list.
+  * Invite members via email with role permissions.
+  * Invitation acceptance & notification management system.
+  * Detailed activity audit logs for board modifications.
 
+* **Admin & User Management:**
+  * Dedicated Admin Dashboard with user metrics, active boards, and system statistics.
+  * JWT-secured authentication (User registration, login, profile management).
 
-<img width="1912" height="901" alt="Screenshot 2025-10-10 140219" src="https://github.com/user-attachments/assets/293d5d75-363f-4472-b331-b0af63b26dd5" />
-<img width="1914" height="906" alt="Screenshot 2025-10-08 143350" src="https://github.com/user-attachments/assets/15157e5c-f0be-4993-b29e-ca248fe501a4" />
+---
 
+## 🛠️ Tech Stack
 
+### Frontend (`reactapp`)
+* **Framework:** React.js 18
+* **Styling:** Modern Vanilla CSS (Glassmorphic UI, responsive design)
+* **Canvas Engine:** HTML5 Canvas API
+* **Icons & State:** Lucide / FontAwesome, React Hooks & Context API
+* **HTTP Client:** Axios / Fetch API
+
+### Backend (`springapp`)
+* **Framework:** Spring Boot 3 / Java 17
+* **Security:** Spring Security & JWT Token Authentication
+* **ORM / Database:** Spring Data JPA with MySQL / PostgreSQL
+* **API Architecture:** RESTful micro-architecture with DTO pattern
+
+---
+
+## 📂 Project Structure
+
+```
+├── reactapp/                 # Frontend React Application
+│   ├── public/               # Static assets and index.html
+│   └── src/
+│       ├── components/       # Reusable UI components (Canvas, Toolbar, Sidebar, Navbar)
+│       ├── pages/            # Page views (Dashboard, Whiteboard, Login, AdminDashboard)
+│       ├── services/         # API integration services
+│       └── styles/           # Modular CSS stylesheets
+│
+├── springapp/                # Backend Spring Boot Application
+│   ├── src/main/java/com/examly/springapp/
+│   │   ├── controller/       # REST API Endpoints (Auth, Whiteboard, Workspace, Session)
+│   │   ├── dto/              # Data Transfer Objects
+│   │   ├── model/            # JPA Database Entities
+│   │   ├── repository/       # Spring Data JPA Repositories
+│   │   └── service/          # Business logic & services
+│   └── src/main/resources/   # Application properties & configurations
+│
+└── README.md
+```
+
+---
+
+## ⚙️ Getting Started
+
+### Prerequisites
+* **Java:** JDK 17 or higher
+* **Node.js:** v16 or higher (with npm)
+* **Database:** MySQL 8.0+ or PostgreSQL
+* **Build Tool:** Maven 3.8+
+
+---
+
+### 1. Database Configuration
+Ensure MySQL is running and create the database:
+```sql
+CREATE DATABASE appDB;
+```
+
+Update your database credentials in `springapp/src/main/resources/application.properties`:
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/appDB?createDatabaseIfNotExist=true
+spring.datasource.username=root
+spring.datasource.password=your_password
+spring.jpa.hibernate.ddl-auto=update
+```
+
+---
+
+### 2. Run Backend (Spring Boot)
+```powershell
+cd springapp
+./mvnw spring-boot:run
+```
+> The backend server will start on **`http://localhost:8080`**.
+
+---
+
+### 3. Run Frontend (React)
+```powershell
+cd reactapp
+npm install
+npm start
+```
+> The React web app will open automatically on **`http://localhost:8081`** (or `http://localhost:3000`).
+
+---
+
+## 📑 Core API Endpoints
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/auth/register` | Register a new user |
+| `POST` | `/api/auth/login` | Authenticate user & get JWT |
+| `GET` | `/api/workspaces` | Fetch all accessible workspaces |
+| `POST` | `/api/workspaces` | Create a new workspace |
+| `GET` | `/api/whiteboards/{id}` | Get whiteboard details & canvas data |
+| `PUT` | `/api/whiteboards/{id}` | Save whiteboard drawings & canvas state |
+| `POST` | `/api/invitations` | Invite collaborator to a board |
+| `GET` | `/api/sessions/{boardId}` | Get active collaboration sessions |
+| `GET` | `/api/activity-logs/{boardId}` | Fetch audit log history |
+
+---
+
+## 👤 Author
+
+* **GitHub:** [@salaivishnu123](https://github.com/salaivishnu123)
+* **Email:** [salaivishnu123@gmail.com](mailto:salaivishnu123@gmail.com)
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - feel free to use and customize it for your needs!
