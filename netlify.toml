@@ -1,0 +1,13 @@
+[build]
+  base = "reactapp"
+  publish = "build"
+  command = "CI=false npm run build"
+
+[build.environment]
+  CI = "false"
+  DISABLE_ESLINT_PLUGIN = "true"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
