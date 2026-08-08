@@ -1,5 +1,5 @@
 // src/pages/Register.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./../styles/auth.css";
 import { register, acceptInvitation } from "../services/api";
@@ -7,9 +7,10 @@ import { register, acceptInvitation } from "../services/api";
 const Register = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", password: "", confirmPassword: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     try {
@@ -28,6 +29,28 @@ const Register = () => {
     }
   }, [location.state]);
 
+  // Password Security Criteria
+  const passwordCriteria = useMemo(() => {
+    const pwd = formData.password || "";
+    return [
+      { id: "length", label: "At least 8 characters", valid: pwd.length >= 8 },
+      { id: "upper", label: "At least one uppercase letter (A-Z)", valid: /[A-Z]/.test(pwd) },
+      { id: "lower", label: "At least one lowercase letter (a-z)", valid: /[a-z]/.test(pwd) },
+      { id: "number", label: "At least one number (0-9)", valid: /[0-9]/.test(pwd) },
+      { id: "special", label: "At least one special character (!@#$%^&*...)", valid: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(pwd) }
+    ];
+  }, [formData.password]);
+
+  const passedCount = useMemo(() => passwordCriteria.filter((c) => c.valid).length, [passwordCriteria]);
+  const isPasswordValid = useMemo(() => passedCount === passwordCriteria.length, [passedCount, passwordCriteria]);
+
+  const strengthMeta = useMemo(() => {
+    if (!formData.password) return { label: "", color: "transparent", percent: 0 };
+    if (passedCount <= 2) return { label: "Weak", color: "#ef4444", percent: 30 };
+    if (passedCount <= 4) return { label: "Medium", color: "#f59e0b", percent: 70 };
+    return { label: "Strong & Secure", color: "#22c55e", percent: 100 };
+  }, [passedCount, formData.password]);
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -36,8 +59,19 @@ const Register = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setLoading(true);
     setError("");
+
+    if (!isPasswordValid) {
+      setError("Please satisfy all password security requirements before proceeding.");
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match. Please verify.");
+      return;
+    }
+
+    setLoading(true);
     try {
       const payload = {
         name: formData.name.trim(),
@@ -77,9 +111,11 @@ const Register = () => {
 
   return (
     <div className="auth-container">
-      <form className="auth-form" onSubmit={handleSubmit}>
-        <h2>Create account</h2>
-        <p style={{ color: "#9ca3af", marginBottom: "1.5rem" }}>Spin up boards with a single sign up.</p>
+      <form className="auth-form" onSubmit={handleSubmit} style={{ maxWidth: "440px" }}>
+        <h2>Create Account</h2>
+        <p style={{ color: "#9ca3af", marginBottom: "1.25rem" }}>
+          Start collaborating in real-time with your team.
+        </p>
 
         {error && (
           <div style={{
@@ -89,6 +125,7 @@ const Register = () => {
             padding: "0.65rem 0.85rem",
             borderRadius: "10px",
             marginBottom: "1rem",
+            fontSize: "0.85rem"
           }}>
             {error}
           </div>
@@ -115,22 +152,86 @@ const Register = () => {
           required
         />
 
+        {/* Password input with toggle */}
+        <div style={{ position: "relative" }}>
+          <input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            placeholder="Create password"
+            value={formData.password}
+            onChange={handleChange}
+            autoComplete="new-password"
+            required
+            style={{ paddingRight: "45px" }}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            style={{
+              position: "absolute",
+              right: "12px",
+              top: "14px",
+              background: "none",
+              border: "none",
+              color: "#94a3b8",
+              cursor: "pointer",
+              fontSize: "0.9rem"
+            }}
+            title={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? "🙈" : "👁️"}
+          </button>
+        </div>
+
+        {/* Password Strength Meter */}
+        {formData.password && (
+          <div style={{ marginBottom: "0.75rem", marginTop: "-4px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.75rem", marginBottom: "4px" }}>
+              <span style={{ color: "#9ca3af" }}>Security Strength:</span>
+              <span style={{ color: strengthMeta.color, fontWeight: "bold" }}>{strengthMeta.label}</span>
+            </div>
+            <div style={{ height: "4px", background: "rgba(255,255,255,0.1)", borderRadius: "4px", overflow: "hidden" }}>
+              <div style={{ width: `${strengthMeta.percent}%`, height: "100%", background: strengthMeta.color, transition: "all 0.3s ease" }} />
+            </div>
+          </div>
+        )}
+
+        {/* Security Requirements Checklist */}
+        <div style={{
+          background: "rgba(15, 23, 42, 0.6)",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+          borderRadius: "8px",
+          padding: "10px 14px",
+          marginBottom: "1rem",
+          fontSize: "0.75rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: "5px"
+        }}>
+          <strong style={{ color: "#e2e8f0", marginBottom: "2px" }}>Password Security Requirements:</strong>
+          {passwordCriteria.map((c) => (
+            <div key={c.id} style={{ display: "flex", alignItems: "center", gap: "8px", color: c.valid ? "#4ade80" : "#94a3b8" }}>
+              <span>{c.valid ? "✓" : "○"}</span>
+              <span>{c.label}</span>
+            </div>
+          ))}
+        </div>
+
         <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
+          type={showPassword ? "text" : "password"}
+          name="confirmPassword"
+          placeholder="Confirm password"
+          value={formData.confirmPassword}
           onChange={handleChange}
           autoComplete="new-password"
-          minLength={4}
           required
         />
 
-        <button type="submit" className="auth-btn" disabled={loading}>
-          {loading ? "Creating..." : "Register"}
+        <button type="submit" className="auth-btn" disabled={loading || !isPasswordValid}>
+          {loading ? "Creating account..." : "Register & Start Collaborating"}
         </button>
 
-        <p>
+        <p style={{ marginTop: "1rem" }}>
           Already have an account? <Link to="/login">Sign in</Link>
         </p>
       </form>

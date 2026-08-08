@@ -415,13 +415,13 @@ export default function Dashboard({ activeView = "dashboard" }) {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [profileName, setProfileName] = useState("");
-  const [profilePassword, setProfilePassword] = useState("••••••••");
+  const [passwordChangeData, setPasswordChangeData] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
+  const [passwordChangeMsg, setPasswordChangeMsg] = useState({ type: "", text: "" });
   
   // Persisted metadata states
   const [metadata, setMetadata] = useState({});
   const [notifications, setNotifications] = useState([]);
   const [activities, setActivities] = useState([]);
-  const [theme, setTheme] = useState("dark");
 
   // Load basic configurations and profile data
   useEffect(() => {
@@ -433,15 +433,6 @@ export default function Dashboard({ activeView = "dashboard" }) {
         setProfileName(parsed.name || "Active Member");
       }
     } catch (_) {}
-
-    // Theme initialization
-    const storedTheme = localStorage.getItem("dashboard_theme") || "dark";
-    setTheme(storedTheme);
-    if (storedTheme === "light") {
-      document.documentElement.classList.add("light-mode");
-    } else {
-      document.documentElement.classList.remove("light-mode");
-    }
 
     // Persisted Metadata
     try {
@@ -518,18 +509,6 @@ export default function Dashboard({ activeView = "dashboard" }) {
   const saveMetadata = (updated) => {
     setMetadata(updated);
     localStorage.setItem("board_metadata", JSON.stringify(updated));
-  };
-
-  // Toggle Theme
-  const handleToggleTheme = () => {
-    const nextTheme = theme === "dark" ? "light" : "dark";
-    setTheme(nextTheme);
-    localStorage.setItem("dashboard_theme", nextTheme);
-    if (nextTheme === "light") {
-      document.documentElement.classList.add("light-mode");
-    } else {
-      document.documentElement.classList.remove("light-mode");
-    }
   };
 
   // Logout
@@ -982,12 +961,6 @@ export default function Dashboard({ activeView = "dashboard" }) {
                   style={{ display: "block", width: "100%", background: "none", border: "none", color: "var(--color-text-main)", padding: "10px 15px", textAlign: "left", cursor: "pointer" }}
                 >
                   ⚙️ Settings
-                </button>
-                <button 
-                  onClick={() => { setShowProfileDropdown(false); handleToggleTheme(); }}
-                  style={{ display: "block", width: "100%", background: "none", border: "none", color: "var(--color-text-main)", padding: "10px 15px", textAlign: "left", cursor: "pointer" }}
-                >
-                  🌓 Toggle {theme === "dark" ? "Light" : "Dark"} Theme
                 </button>
                 <hr style={{ border: "0", borderTop: "1px solid var(--glass-border)", margin: "4px 0" }} />
                 <button 
@@ -1599,29 +1572,108 @@ export default function Dashboard({ activeView = "dashboard" }) {
 
       {/* VIEW: SETTINGS */}
       {activeView === "settings" && (
-        <div className="glass-panel" style={{ padding: "2rem", maxWidth: "500px" }}>
-          <h3 style={{ margin: "0 0 1.5rem 0" }}>Application Settings</h3>
+        <div className="glass-panel" style={{ padding: "2rem", maxWidth: "560px" }}>
+          <h3 style={{ margin: "0 0 0.5rem 0", fontSize: "1.3rem" }}>🔒 Account & Password Security</h3>
+          <p style={{ color: "var(--color-text-muted)", fontSize: "0.85rem", marginBottom: "1.5rem" }}>
+            Protect your account by ensuring your password meets the security requirements.
+          </p>
           
-          <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-            <div>
-              <label style={{ fontSize: "0.85rem", fontWeight: "bold", display: "block" }}>Security Password</label>
-              <input type="password" value={profilePassword} onChange={(e) => setProfilePassword(e.target.value)} style={{ margin: "6px 0" }} />
-              <button className="nav-pill" style={{ marginTop: "4px" }} onClick={() => { alert("Password changed successfully!"); setProfilePassword("••••••••"); }}>
-                Change Password
-              </button>
-            </div>
-
-            <hr style={{ border: "0", borderTop: "1px solid var(--glass-border)" }} />
-
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div>
-                <strong style={{ display: "block" }}>Theme Mode</strong>
-                <span style={{ fontSize: "0.8rem", color: "var(--color-text-muted)" }}>Toggle Light Mode or Dark Mode theme styles.</span>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            {passwordChangeMsg.text && (
+              <div style={{
+                background: passwordChangeMsg.type === "success" ? "rgba(34, 197, 94, 0.15)" : "rgba(239, 68, 68, 0.15)",
+                border: `1px solid ${passwordChangeMsg.type === "success" ? "rgba(34, 197, 94, 0.4)" : "rgba(239, 68, 68, 0.4)"}`,
+                color: passwordChangeMsg.type === "success" ? "#86efac" : "#fca5a5",
+                padding: "0.65rem 1rem",
+                borderRadius: "8px",
+                fontSize: "0.85rem"
+              }}>
+                {passwordChangeMsg.text}
               </div>
-              <button className="btn ghost" onClick={handleToggleTheme}>
-                {theme === "dark" ? "☀️ Switch Light" : "🌙 Switch Dark"}
-              </button>
+            )}
+
+            <div>
+              <label style={{ fontSize: "0.8rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: "bold" }}>Current Password</label>
+              <input 
+                type="password" 
+                placeholder="Enter current password" 
+                value={passwordChangeData.currentPassword} 
+                onChange={(e) => setPasswordChangeData({ ...passwordChangeData, currentPassword: e.target.value })} 
+                style={{ margin: "6px 0 0 0" }} 
+              />
             </div>
+
+            <div>
+              <label style={{ fontSize: "0.8rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: "bold" }}>New Password</label>
+              <input 
+                type="password" 
+                placeholder="Enter new strong password" 
+                value={passwordChangeData.newPassword} 
+                onChange={(e) => setPasswordChangeData({ ...passwordChangeData, newPassword: e.target.value })} 
+                style={{ margin: "6px 0 0 0" }} 
+              />
+            </div>
+
+            {/* Password Security Criteria Checklist */}
+            <div style={{
+              background: "rgba(15, 23, 42, 0.6)",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              borderRadius: "8px",
+              padding: "10px 14px",
+              fontSize: "0.78rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "6px"
+            }}>
+              <strong style={{ color: "#e2e8f0" }}>Password Security Requirements:</strong>
+              {[
+                { id: "len", label: "At least 8 characters", valid: passwordChangeData.newPassword.length >= 8 },
+                { id: "up", label: "At least one uppercase letter (A-Z)", valid: /[A-Z]/.test(passwordChangeData.newPassword) },
+                { id: "low", label: "At least one lowercase letter (a-z)", valid: /[a-z]/.test(passwordChangeData.newPassword) },
+                { id: "num", label: "At least one number (0-9)", valid: /[0-9]/.test(passwordChangeData.newPassword) },
+                { id: "spec", label: "At least one special character (!@#$%^&*...)", valid: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(passwordChangeData.newPassword) }
+              ].map((c) => (
+                <div key={c.id} style={{ display: "flex", alignItems: "center", gap: "8px", color: c.valid ? "#4ade80" : "#94a3b8" }}>
+                  <span>{c.valid ? "✓" : "○"}</span>
+                  <span>{c.label}</span>
+                </div>
+              ))}
+            </div>
+
+            <div>
+              <label style={{ fontSize: "0.8rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: "bold" }}>Confirm New Password</label>
+              <input 
+                type="password" 
+                placeholder="Re-enter new password" 
+                value={passwordChangeData.confirmPassword} 
+                onChange={(e) => setPasswordChangeData({ ...passwordChangeData, confirmPassword: e.target.value })} 
+                style={{ margin: "6px 0 0 0" }} 
+              />
+            </div>
+
+            <button 
+              className="btn" 
+              style={{ marginTop: "0.5rem", padding: "10px" }}
+              onClick={() => {
+                const pwd = passwordChangeData.newPassword;
+                const isValid = pwd.length >= 8 && /[A-Z]/.test(pwd) && /[a-z]/.test(pwd) && /[0-9]/.test(pwd) && /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(pwd);
+                
+                if (!isValid) {
+                  setPasswordChangeMsg({ type: "error", text: "Please meet all password requirements before saving." });
+                  return;
+                }
+                if (pwd !== passwordChangeData.confirmPassword) {
+                  setPasswordChangeMsg({ type: "error", text: "New passwords do not match. Please verify." });
+                  return;
+                }
+
+                setPasswordChangeMsg({ type: "success", text: "Your password has been updated securely!" });
+                setPasswordChangeData({ currentPassword: "", newPassword: "", confirmPassword: "" });
+                addActivity("updated security password", "Account Security");
+              }}
+            >
+              Update Password
+            </button>
           </div>
         </div>
       )}
