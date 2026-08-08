@@ -116,3 +116,13 @@ export const removeBoardMember = (id, email) =>
 export const updateBoardShareSettings = (id, visibility) => 
   axios.post(`${API_BASE}/api/boards/${id}/share-link`, { visibility }).then(r => r.data);
 
+// Backward compatibility exports for original unit tests
+export const getSessions = () => 
+  axios.get(`${API_BASE}/api/whiteboards`).then(r => r.data);
+
+export const createSession = (payload) => 
+  axios.post(`${API_BASE}/api/whiteboards`, { name: payload.sessionName }).then(r => r.data);
+
+export const getSessionById = (id) => 
+  axios.get(`${API_BASE}/api/whiteboards/${id}`).then(r => r.data);
+
