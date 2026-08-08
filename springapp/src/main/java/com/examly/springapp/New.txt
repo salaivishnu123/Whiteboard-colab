@@ -1,0 +1,88 @@
+com.yourapp.whiteboard
+│
+├── controller
+│   ├── UserController.java
+│   ├── WorkspaceController.java
+│   ├── WhiteboardController.java
+│   ├── SessionController.java
+│   └── TemplateController.java
+│
+├── dto
+│   ├── UserDTO.java
+│   ├── WorkspaceDTO.java
+│   ├── WhiteboardDTO.java
+│   ├── SessionDTO.java
+│   └── TemplateDTO.java
+│
+├── model
+│   ├── User.java
+│   ├── Workspace.java
+│   ├── Whiteboard.java
+│   ├── CollaborationSession.java
+│   └── Template.java
+│
+├── repository
+│   ├── UserRepository.java
+│   ├── WorkspaceRepository.java
+│   ├── WhiteboardRepository.java
+│   ├── SessionRepository.java
+│   └── TemplateRepository.java
+│
+└── service
+    ├── UserService.java
+    ├── WorkspaceService.java
+    ├── WhiteboardService.java
+    ├── SessionService.java
+    └── TemplateService.java
+
+
+src/
+│
+├── api/                      ✅ For API service calls (Axios/Fetch)
+│   ├── userApi.js
+│   ├── workspaceApi.js
+│   ├── whiteboardApi.js
+│   ├── sessionApi.js
+│   └── templateApi.js
+│
+├── components/              ✅ Reusable UI Components
+│   ├── Navbar.jsx
+│   ├── Sidebar.jsx
+│   ├── WhiteboardCanvas.jsx
+│   ├── TemplateCard.jsx
+│   ├── WorkspaceCard.jsx
+│   └── UserAvatar.jsx
+│
+├── pages/                   ✅ Main Screens (Based on Backend Modules)
+│   ├── Login.jsx
+│   ├── Register.jsx
+│   ├── Dashboard.jsx
+│   ├── WorkspacePage.jsx
+│   ├── WhiteboardPage.jsx
+│   ├── SessionPage.jsx
+│   └── TemplatesPage.jsx
+│
+├── context/                 ✅ Global State Management
+│   ├── AuthContext.js
+│   ├── WorkspaceContext.js
+│   ├── WhiteboardContext.js
+│   └── SessionContext.js
+│
+├── routes/                  ✅ Centralized Route Management
+│   └── AppRoutes.jsx
+│
+├── styles/                  ✅ Styling (CSS Modules OR Tailwind OR Styled-Components)
+│   ├── global.css
+│   ├── auth.css
+│   ├── dashboard.css
+│   ├── workspace.css
+│   ├── whiteboard.css
+│   └── templates.css
+│
+├── utils/                   ✅ Helpers
+│   ├── websocket.js
+│   ├── storage.js
+│   └── constants.js
+│
+├── App.js
+└── index.js

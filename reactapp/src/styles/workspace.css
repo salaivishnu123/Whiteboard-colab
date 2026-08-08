@@ -1,0 +1,304 @@
+.workspace-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-bottom: 3rem;
+  width: 100%;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.workspace-hero {
+  padding: 3rem;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(6, 182, 212, 0.08) 100%);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--glass-shadow);
+}
+
+.workspace-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(6, 182, 212, 0.15), transparent 60%);
+  pointer-events: none;
+}
+
+.workspace-hero > div {
+  position: relative;
+  z-index: 2;
+}
+
+.workspace-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.72rem;
+  font-family: var(--font-heading);
+  color: var(--color-secondary);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.workspace-hero h2 {
+  font-size: 2.1rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem 0;
+  background: linear-gradient(to right, #ffffff, #cbd5e1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.workspace-subtitle {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 580px;
+}
+
+.workspace-body {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.workspace-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.workspace-right {
+  position: sticky;
+  top: 96px;
+}
+
+.workspace-actions {
+  background: rgba(15, 23, 42, 0.25);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: var(--glass-blur);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.workspace-actions-header h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.workspace-actions-header p {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+.workspace-create {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.workspace-create input {
+  flex: 1;
+  margin: 0;
+}
+
+.workspace-create .btn {
+  white-space: nowrap;
+}
+
+.workspace-search {
+  width: 100%;
+}
+
+.workspace-search input {
+  margin: 0;
+}
+
+.workspace-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--glass-border);
+  padding-top: 1rem;
+}
+
+.sorting-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sorting-controls select {
+  width: auto;
+  padding: 8px 14px;
+  margin: 0;
+}
+
+.sort-direction-btn {
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  color: var(--color-text-main);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sort-direction-btn:hover {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.page-size-select {
+  width: auto;
+  padding: 8px 12px;
+  margin: 0;
+}
+
+.workspace-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.workspace-empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  border: 1px dashed var(--glass-border-hover);
+  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.1);
+  color: var(--color-text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.workspace-empty h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.workspace-empty p {
+  font-size: 0.85rem;
+}
+
+.workspace-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.workspace-pagination button {
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  color: var(--color-text-main);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.workspace-pagination button:hover:not(:disabled) {
+  background: var(--color-primary);
+  border-color: transparent;
+  color: #ffffff;
+}
+
+.workspace-pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.workspace-pagination span {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+/* Right Detail Column */
+.workspace-detail {
+  background: rgba(15, 23, 42, 0.25);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 1.75rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: var(--glass-blur);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.workspace-detail h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.workspace-detail p {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.workspace-tips {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.workspace-tips li {
+  position: relative;
+  padding-left: 1.25rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.workspace-tips li::before {
+  content: "✦";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--color-secondary);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 1024px) {
+  .workspace-body {
+    grid-template-columns: 1fr;
+  }
+  
+  .workspace-right {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .workspace-hero {
+    padding: 2rem;
+  }
+  
+  .workspace-create {
+    flex-direction: column;
+  }
+  
+  .workspace-controls {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+}

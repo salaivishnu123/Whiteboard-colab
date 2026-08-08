@@ -1,0 +1,29 @@
+## OS
+.DS_Store
+Thumbs.db
+
+## Environment
+.env
+.env.local
+
+## Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+## Node
+node_modules/
+
+## Editors/IDEs
+.vscode/
+.idea/
+*.iml
+
+## Misc
+coverage/
+npm-debug.log
+
+# Note: build/ and target/ are intentionally NOT ignored so full project artifacts
+# (including `reactapp/build` and `springapp/target`) will be included unless
+# subdirectory .gitignore files override this.
