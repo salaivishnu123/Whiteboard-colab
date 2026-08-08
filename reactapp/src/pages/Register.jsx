@@ -1,5 +1,5 @@
 // src/pages/Register.jsx
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./../styles/auth.css";
 import { register, acceptInvitation } from "../services/api";
@@ -29,28 +29,6 @@ const Register = () => {
     }
   }, [location.state]);
 
-  // Password Security Criteria
-  const passwordCriteria = useMemo(() => {
-    const pwd = formData.password || "";
-    return [
-      { id: "length", label: "At least 8 characters", valid: pwd.length >= 8 },
-      { id: "upper", label: "At least one uppercase letter (A-Z)", valid: /[A-Z]/.test(pwd) },
-      { id: "lower", label: "At least one lowercase letter (a-z)", valid: /[a-z]/.test(pwd) },
-      { id: "number", label: "At least one number (0-9)", valid: /[0-9]/.test(pwd) },
-      { id: "special", label: "At least one special character (!@#$%^&*...)", valid: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(pwd) }
-    ];
-  }, [formData.password]);
-
-  const passedCount = useMemo(() => passwordCriteria.filter((c) => c.valid).length, [passwordCriteria]);
-  const isPasswordValid = useMemo(() => passedCount === passwordCriteria.length, [passedCount, passwordCriteria]);
-
-  const strengthMeta = useMemo(() => {
-    if (!formData.password) return { label: "", color: "transparent", percent: 0 };
-    if (passedCount <= 2) return { label: "Weak", color: "#ef4444", percent: 30 };
-    if (passedCount <= 4) return { label: "Medium", color: "#f59e0b", percent: 70 };
-    return { label: "Strong & Secure", color: "#22c55e", percent: 100 };
-  }, [passedCount, formData.password]);
-
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -61,8 +39,15 @@ const Register = () => {
     event.preventDefault();
     setError("");
 
-    if (!isPasswordValid) {
-      setError("Please satisfy all password security requirements before proceeding.");
+    const pwd = formData.password || "";
+    const hasMinLength = pwd.length >= 8;
+    const hasUpper = /[A-Z]/.test(pwd);
+    const hasLower = /[a-z]/.test(pwd);
+    const hasNumber = /[0-9]/.test(pwd);
+    const hasSpecial = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(pwd);
+
+    if (!hasMinLength || !hasUpper || !hasLower || !hasNumber || !hasSpecial) {
+      setError("Password must be at least 8 characters long and include an uppercase letter (A-Z), a lowercase letter (a-z), a number (0-9), and a special character (!@#$%^&*).");
       return;
     }
 
@@ -111,7 +96,7 @@ const Register = () => {
 
   return (
     <div className="auth-container">
-      <form className="auth-form" onSubmit={handleSubmit} style={{ maxWidth: "440px" }}>
+      <form className="auth-form" onSubmit={handleSubmit} style={{ maxWidth: "420px" }}>
         <h2>Create Account</h2>
         <p style={{ color: "#9ca3af", marginBottom: "1.25rem" }}>
           Start collaborating in real-time with your team.
@@ -122,10 +107,11 @@ const Register = () => {
             background: "rgba(248, 113, 113, 0.18)",
             border: "1px solid rgba(239, 68, 68, 0.45)",
             color: "#fecaca",
-            padding: "0.65rem 0.85rem",
+            padding: "0.75rem 0.9rem",
             borderRadius: "10px",
             marginBottom: "1rem",
-            fontSize: "0.85rem"
+            fontSize: "0.85rem",
+            lineHeight: "1.4"
           }}>
             {error}
           </div>
@@ -157,7 +143,7 @@ const Register = () => {
           <input
             type={showPassword ? "text" : "password"}
             name="password"
-            placeholder="Create password"
+            placeholder="Password (8+ chars, upper, lower, num, special)"
             value={formData.password}
             onChange={handleChange}
             autoComplete="new-password"
@@ -183,40 +169,6 @@ const Register = () => {
           </button>
         </div>
 
-        {/* Password Strength Meter */}
-        {formData.password && (
-          <div style={{ marginBottom: "0.75rem", marginTop: "-4px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.75rem", marginBottom: "4px" }}>
-              <span style={{ color: "#9ca3af" }}>Security Strength:</span>
-              <span style={{ color: strengthMeta.color, fontWeight: "bold" }}>{strengthMeta.label}</span>
-            </div>
-            <div style={{ height: "4px", background: "rgba(255,255,255,0.1)", borderRadius: "4px", overflow: "hidden" }}>
-              <div style={{ width: `${strengthMeta.percent}%`, height: "100%", background: strengthMeta.color, transition: "all 0.3s ease" }} />
-            </div>
-          </div>
-        )}
-
-        {/* Security Requirements Checklist */}
-        <div style={{
-          background: "rgba(15, 23, 42, 0.6)",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          borderRadius: "8px",
-          padding: "10px 14px",
-          marginBottom: "1rem",
-          fontSize: "0.75rem",
-          display: "flex",
-          flexDirection: "column",
-          gap: "5px"
-        }}>
-          <strong style={{ color: "#e2e8f0", marginBottom: "2px" }}>Password Security Requirements:</strong>
-          {passwordCriteria.map((c) => (
-            <div key={c.id} style={{ display: "flex", alignItems: "center", gap: "8px", color: c.valid ? "#4ade80" : "#94a3b8" }}>
-              <span>{c.valid ? "✓" : "○"}</span>
-              <span>{c.label}</span>
-            </div>
-          ))}
-        </div>
-
         <input
           type={showPassword ? "text" : "password"}
           name="confirmPassword"
@@ -227,8 +179,8 @@ const Register = () => {
           required
         />
 
-        <button type="submit" className="auth-btn" disabled={loading || !isPasswordValid}>
-          {loading ? "Creating account..." : "Register & Start Collaborating"}
+        <button type="submit" className="auth-btn" disabled={loading} style={{ marginTop: "0.5rem" }}>
+          {loading ? "Creating account..." : "Register"}
         </button>
 
         <p style={{ marginTop: "1rem" }}>

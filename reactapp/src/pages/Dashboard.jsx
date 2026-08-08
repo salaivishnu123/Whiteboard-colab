@@ -1614,32 +1614,6 @@ export default function Dashboard({ activeView = "dashboard" }) {
               />
             </div>
 
-            {/* Password Security Criteria Checklist */}
-            <div style={{
-              background: "rgba(15, 23, 42, 0.6)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-              borderRadius: "8px",
-              padding: "10px 14px",
-              fontSize: "0.78rem",
-              display: "flex",
-              flexDirection: "column",
-              gap: "6px"
-            }}>
-              <strong style={{ color: "#e2e8f0" }}>Password Security Requirements:</strong>
-              {[
-                { id: "len", label: "At least 8 characters", valid: passwordChangeData.newPassword.length >= 8 },
-                { id: "up", label: "At least one uppercase letter (A-Z)", valid: /[A-Z]/.test(passwordChangeData.newPassword) },
-                { id: "low", label: "At least one lowercase letter (a-z)", valid: /[a-z]/.test(passwordChangeData.newPassword) },
-                { id: "num", label: "At least one number (0-9)", valid: /[0-9]/.test(passwordChangeData.newPassword) },
-                { id: "spec", label: "At least one special character (!@#$%^&*...)", valid: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(passwordChangeData.newPassword) }
-              ].map((c) => (
-                <div key={c.id} style={{ display: "flex", alignItems: "center", gap: "8px", color: c.valid ? "#4ade80" : "#94a3b8" }}>
-                  <span>{c.valid ? "✓" : "○"}</span>
-                  <span>{c.label}</span>
-                </div>
-              ))}
-            </div>
-
             <div>
               <label style={{ fontSize: "0.8rem", color: "var(--color-text-muted)", textTransform: "uppercase", fontWeight: "bold" }}>Confirm New Password</label>
               <input 
@@ -1655,11 +1629,18 @@ export default function Dashboard({ activeView = "dashboard" }) {
               className="btn" 
               style={{ marginTop: "0.5rem", padding: "10px" }}
               onClick={() => {
-                const pwd = passwordChangeData.newPassword;
-                const isValid = pwd.length >= 8 && /[A-Z]/.test(pwd) && /[a-z]/.test(pwd) && /[0-9]/.test(pwd) && /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(pwd);
+                const pwd = passwordChangeData.newPassword || "";
+                const hasMinLength = pwd.length >= 8;
+                const hasUpper = /[A-Z]/.test(pwd);
+                const hasLower = /[a-z]/.test(pwd);
+                const hasNumber = /[0-9]/.test(pwd);
+                const hasSpecial = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(pwd);
                 
-                if (!isValid) {
-                  setPasswordChangeMsg({ type: "error", text: "Please meet all password requirements before saving." });
+                if (!hasMinLength || !hasUpper || !hasLower || !hasNumber || !hasSpecial) {
+                  setPasswordChangeMsg({ 
+                    type: "error", 
+                    text: "Password must be at least 8 characters long and include an uppercase letter (A-Z), a lowercase letter (a-z), a number (0-9), and a special character (!@#$%^&*)." 
+                  });
                   return;
                 }
                 if (pwd !== passwordChangeData.confirmPassword) {
