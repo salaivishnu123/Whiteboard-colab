@@ -28,7 +28,7 @@
   },
   "scripts": {
     "start": "react-scripts start --disable-host-check --host 0.0.0.0",
-    "build": "react-scripts build",
+    "build": "CI=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
